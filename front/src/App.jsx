@@ -63,6 +63,8 @@ const App = () => {
   }
 
   const addTodo = (text) => {
+    console.log(filter)
+    return new  Promise ((resolve, reject) => {
     workWithDB('http://127.0.0.1:8000/api/v1/todos/todos/', 'POST', {text})
     .then((data) => {
       setTodos(todos.concat([{              
@@ -70,7 +72,9 @@ const App = () => {
         text,
         status: false,
       }]));
-    });      
+      resolve();
+    });
+  })      
   }
 
   async function workWithDB(url, meth, data ) {
