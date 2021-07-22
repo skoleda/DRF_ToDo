@@ -3,7 +3,8 @@ import TodoList from "./Todo/TodoList";
 import Context from "./context";
 import AddTodo from "./Todo/AddTodo";
 
-const App = () => { 
+const App = () => {
+  const publicUrl = 'http://127.0.0.1:8000/api/v1/todos/todos/';
   const [todos, setTodos] = useState([]);
   const [filter, setFilter] = useState('all');
 
@@ -14,7 +15,7 @@ const App = () => {
   const toggleTodo = (id) => {
       const todo = todos.find(item => item.id === id)
       todo.status = !todo.status;
-      workWithDB(`http://127.0.0.1:8000/api/v1/todos/todos/${todo.id}/`, 'PUT', todo)
+      workWithDB(`${publicUrl}${todo.id}/`, 'PUT', todo)
       .then((data) => {
         if (data && !data.detail) { 
           setTodosFromDB()
@@ -38,7 +39,7 @@ const App = () => {
   }
 
   const removeTodo = (id) => {     
-    workWithDB('http://127.0.0.1:8000/api/v1/todos/todos/'+id+'/', 'DELETE', {id}); 
+    workWithDB(`${publicUrl}${id}/`, 'DELETE', {id});
     setTodos(todos.filter(todo => todo.id !== id));  
   }
 
@@ -54,7 +55,7 @@ const App = () => {
     setFilter('work');  
   }
 
-  const showComplited = () => {  
+  const showCompleted = () => {
     setFilter('compl');   
   }
 
@@ -65,7 +66,7 @@ const App = () => {
   const addTodo = (text) => {
     console.log(filter)
     return new  Promise ((resolve, reject) => {
-    workWithDB('http://127.0.0.1:8000/api/v1/todos/todos/', 'POST', {text})
+    workWithDB(`${publicUrl}`, 'POST', {text})
     .then((data) => {
       setTodos(todos.concat([{              
         id:data.id,
@@ -92,7 +93,7 @@ const App = () => {
 
   function setTodosFromDB () {  
     return new  Promise ((resolve, reject) => {
-    workWithDB('http://127.0.0.1:8000/api/v1/todos/todos/','GET')
+    workWithDB(`${publicUrl}`,'GET')
       .then((data) => {
         setTodos(checkFilter(data, filter))
         resolve();
@@ -113,7 +114,7 @@ const App = () => {
           <button  type='submit' onClick = {clearAll} className = 'btnStates'>remove all</button>           
           <button id = 'btnShowAll' type='submit' onClick = {showAll} className = {`btnStates ${filter === 'all' ? 'gradient-button' : ''}`}>show all</button> 
           <button id = 'btnShowWork' type='submit' onClick = {showWork} className = {`btnStates ${filter === 'work' ? 'gradient-button' : ''}`}>show in worke</button>
-          <button id = 'btnShowComp' type='submit' onClick = {showComplited} className = {`btnStates ${filter === 'compl' ? 'gradient-button' : ''}`}>show complited</button>  
+          <button id = 'btnShowComp' type='submit' onClick = {showCompleted} className = {`btnStates ${filter === 'compl' ? 'gradient-button' : ''}`}>show complited</button>
         </div> 
       </div>
       </Context.Provider>
